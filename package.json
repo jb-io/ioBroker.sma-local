@@ -31,7 +31,7 @@
     "@iobroker/types": "^6.0.11",
     "@tsconfig/node20": "^20.1.4",
     "@types/chai": "^4.3.19",
-    "@types/chai-as-promised": "^8.0.0",
+    "@types/chai-as-promised": "^8.0.1",
     "@types/lodash": "^4.17.7",
     "@types/mocha": "^10.0.7",
     "@types/node": "^20.16.5",
