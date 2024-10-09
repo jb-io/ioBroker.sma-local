@@ -1,0 +1,122 @@
+{
+  "common": {
+    "name": "sma-local",
+    "version": "0.0.1",
+    "news": {
+      "0.0.1": {
+        "en": "initial release",
+        "de": "Erstveröffentlichung",
+        "ru": "Начальная версия",
+        "pt": "lançamento inicial",
+        "nl": "Eerste uitgave",
+        "fr": "Première version",
+        "it": "Versione iniziale",
+        "es": "Versión inicial",
+        "pl": "Pierwsze wydanie",
+        "uk": "Початкова версія",
+        "zh-cn": "首次出版"
+      }
+    },
+    "titleLang": {
+      "en": "SMA Local Device",
+      "de": "SMA Lokales Gerät",
+      "ru": "Локальное устройство SMA",
+      "pt": "Dispositivo local SMA",
+      "nl": "SMA Lokaal apparaat",
+      "fr": "Appareil local SMA",
+      "it": "Dispositivo locale SMA",
+      "es": "Dispositivo local SMA",
+      "pl": "Urządzenie lokalne SMA",
+      "uk": "Локальний пристрій SMA",
+      "zh-cn": "SMA 本地设备"
+    },
+    "desc": {
+      "en": "Integration of Local SMA devices without cloud connection",
+      "de": "Integration von lokalen SMA Geräten ohne Cloud",
+      "ru": "Интеграция локальных устройств SMA без подключения к облаку",
+      "pt": "Integração de dispositivos SMA locais sem conexão à nuvem",
+      "nl": "Integratie van lokale SMA-apparaten zonder cloudverbinding",
+      "fr": "Intégration d'appareils SMA locaux sans connexion cloud",
+      "it": "Integrazione di dispositivi SMA locali senza connessione cloud",
+      "es": "Integración de dispositivos SMA locales sin conexión a la nube",
+      "pl": "Integracja lokalnych urządzeń SMA bez połączenia z chmurą",
+      "uk": "Інтеграція локальних пристроїв SMA без підключення до хмари",
+      "zh-cn": "无需云连接即可集成本地 SMA 设备"
+    },
+    "authors": [
+      "jb-io <96919536+jb-io@users.noreply.github.com>"
+    ],
+    "keywords": [
+      "energy management"
+    ],
+    "licenseInformation": {
+      "type": "free",
+      "license": "MIT"
+    },
+    "platform": "Javascript/Node.js",
+    "main": "build/main.js",
+    "icon": "sma-local.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/jb-io/ioBroker.sma-local/master/admin/sma-local.png",
+    "readme": "https://github.com/jb-io/ioBroker.sma-local/blob/master/README.md",
+    "loglevel": "info",
+    "tier": 3,
+    "mode": "daemon",
+    "type": "iot-systems",
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "poll",
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=5.0.0"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=6.0.0"
+      }
+    ],
+    "localLinks": {
+      "_default": "http://%host%"
+    }
+  },
+  "protectedNative": [
+    "password"
+  ],
+  "native": {
+    "host": "SMA[serial number].local",
+    "legacyDevice": false,
+    "username": "",
+    "password": "",
+    "storeSessionToken": false,
+    "intervalLiveData": 30,
+    "intervalFull": 300
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "Device or service connected",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
+}

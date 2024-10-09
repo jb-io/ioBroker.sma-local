@@ -1,0 +1,10 @@
+{
+    "host": "Hostnaam of IP",
+    "legacy_device": "Apparaattype",
+    "store_session_token": "Sla sessietoken op als gegevensobject",
+    "interval_full": "Verzoekinterval (sec) Vol",
+    "interval_live_data": "Interval opvragen (sec) Live data",
+    "general": "Algemeen",
+    "username": "Gebruikersnaam",
+    "password": "Wachtwoord"
+}

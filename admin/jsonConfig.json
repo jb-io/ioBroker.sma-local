@@ -1,0 +1,76 @@
+{
+    "i18n": true,
+    "type": "tabs",
+    "items": {
+        "general": {
+            "type": "panel",
+            "label": "general",
+            "items": {
+                "host": {
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "type": "text",
+                    "label": "host"
+                },
+                "legacyDevice": {
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "type": "select",
+                    "label": "legacy_device",
+                    "options": [
+                        {
+                            "label": {
+                                "en": "Legacy"
+                            },
+                            "value": true
+                        },
+                        {
+                            "label": {
+                                "en": "ennexOS"
+                            },
+                            "value": false
+                        }
+                    ]
+                },
+                "username": {
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "type": "text",
+                    "label": "username",
+                    "hidden": "data.legacyDevice === true",
+                    "hideOnlyControl": true,
+                    "newLine": true
+                },
+                "password": {
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "type": "password",
+                    "label": "password"
+                },
+                "storeSessionToken": {
+                    "type": "checkbox",
+                    "label": "store_session_token"
+                },
+                "intervalFull": {
+                    "xs": 12,
+                    "sm": 4,
+                    "md": 2,
+                    "type": "number",
+                    "label": "interval_full",
+                    "newLine": true
+                },
+                "intervalLiveData": {
+                    "xs": 12,
+                    "sm": 4,
+                    "md": 2,
+                    "type": "number",
+                    "label": "interval_live_data"
+                }
+            }
+        }
+    }
+}

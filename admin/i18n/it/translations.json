@@ -1,0 +1,10 @@
+{
+    "host": "Nome host o IP",
+    "legacy_device": "Tipo di dispositivo",
+    "store_session_token": "Memorizza il token di sessione come oggetto dati",
+    "interval_full": "Intervallo di richiesta (sec) Pieno",
+    "interval_live_data": "Intervallo di richiesta (sec) Dati in tempo reale",
+    "general": "Generale",
+    "username": "Nome utente",
+    "password": "Password"
+}

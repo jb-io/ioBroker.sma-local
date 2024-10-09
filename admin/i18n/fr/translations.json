@@ -1,0 +1,10 @@
+{
+    "host": "Nom d'hôte ou IP",
+    "legacy_device": "Type d'appareil",
+    "store_session_token": "Stocker le jeton de session en tant qu'objet de données",
+    "interval_full": "Intervalle de requête (sec) Complet",
+    "interval_live_data": "Intervalle de requête (sec) Données en direct",
+    "general": "Général",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe"
+}

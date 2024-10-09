@@ -1,0 +1,10 @@
+{
+    "host": "Hostname oder IP",
+    "legacy_device": "Gerätetyp",
+    "store_session_token": "Session Token als Datenobjekt speichern",
+    "interval_full": "Abfrage Interval (sek) Vollständig",
+    "interval_live_data": "Abfrage Interval (sek) Live Daten",
+    "general": "Allgemein",
+    "username": "Benutzername",
+    "password": "Passwort"
+}

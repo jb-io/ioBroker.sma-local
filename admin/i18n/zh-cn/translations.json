@@ -1,0 +1,10 @@
+{
+    "host": "主机名或IP",
+    "legacy_device": "设备类型",
+    "store_session_token": "将会话令牌存储为数据对象",
+    "interval_full": "请求间隔（秒） 已满",
+    "interval_live_data": "请求间隔（秒） 实时数据",
+    "general": "一般的",
+    "username": "用户名",
+    "password": "密码"
+}
