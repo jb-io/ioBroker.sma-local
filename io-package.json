@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "sma-local",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "news": {
+      "0.1.0": {
+        "en": "[TASK] initial release",
+        "de": "[TASK] erste Veröffentlichung",
+        "ru": "[TASK] первоначальный релиз",
+        "pt": "[TASK] lançamento inicial",
+        "nl": "[TASK] eerste release",
+        "fr": "[TASK] libération initiale",
+        "it": "[TASK] rilascio iniziale",
+        "es": "[TASK] versión inicial",
+        "pl": "[TASK] wydanie wstępne",
+        "uk": "[TASK] початковий реліз",
+        "zh-cn": "[TASK]初始发布"
+      },
       "0.0.1": {
         "en": "initial release",
         "de": "Erstveröffentlichung",
