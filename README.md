@@ -44,6 +44,7 @@ https://www.sma.de/produkte
 -->
 ### **WORK IN PROGRESS**
 * [FIX] Re-apply Authorization header when retrying requests after re-authentication
+* [ENH] Detect Ennexos device environment (TripowerX/EV-Charger) instead of hardcoding TripowerX
 
 ### 0.1.0 (2024-10-09)
 * [TASK] initial release

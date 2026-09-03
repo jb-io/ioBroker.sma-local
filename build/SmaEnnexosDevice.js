@@ -33,8 +33,13 @@ __export(SmaEnnexosDevice_exports, {
 module.exports = __toCommonJS(SmaEnnexosDevice_exports);
 var import_SmaDevice = __toESM(require("./SmaDevice"));
 var import_data = require("./data");
+const environmentTranslationMap = {
+  "universe-prod": "TripowerX",
+  "evcharger": "EvCharger"
+};
 class SmaEnnexosDevice extends import_SmaDevice.default {
   componentId = "IGULD:SELF";
+  environment = null;
   async login() {
     return this._client.post("/api/v1/token", {
       grant_type: "password",
@@ -45,6 +50,15 @@ class SmaEnnexosDevice extends import_SmaDevice.default {
         "content-type": "application/x-www-form-urlencoded"
       }
     }).then(({ data }) => data);
+  }
+  async getEnvironment() {
+    if (this.environment) {
+      return this.environment;
+    }
+    return this._client.get(`/webui/assets/conf/environment.json`).then(({ data }) => {
+      this.environment = data;
+      return data;
+    });
   }
   async getLiveMeasurementValues() {
     return this._client.post(
@@ -87,10 +101,12 @@ class SmaEnnexosDevice extends import_SmaDevice.default {
     return this._client.get(url).then(({ data }) => data);
   }
   async getDeviceDefinitions() {
-    return Promise.resolve((0, import_data.getDevices)("TripowerX"));
+    const environment = (await this.getEnvironment()).environment;
+    return (0, import_data.getDevices)(environmentTranslationMap[environment]);
   }
   async getTranslations() {
-    return Promise.resolve((0, import_data.getMeta)("TripowerX", "de").META);
+    const environment = (await this.getEnvironment()).environment;
+    return (0, import_data.getMeta)(environmentTranslationMap[environment], "de").META;
   }
 }
 //# sourceMappingURL=SmaEnnexosDevice.js.map

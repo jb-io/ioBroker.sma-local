@@ -25,7 +25,7 @@ export type Meta = {META: MetaItems}
 
 export type Messages = {[key: string]: {[key: string]:string}}
 
-type DeviceType = 'TripowerX' | 'EvCharger';
+export type DeviceType = 'TripowerX' | 'EvCharger';
 type Language = 'de' | 'en';
 
 export function getDevices(type: DeviceType): Devices {

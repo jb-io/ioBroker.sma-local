@@ -1,5 +1,5 @@
 import SmaDevice from "./SmaDevice";
-import {getDevices, getMeta, Devices, MetaItems} from "./data";
+import {getDevices, getMeta, Devices, MetaItems, DeviceType} from "./data";
 
 interface SmaLoginResponse {
     access_token: string,
@@ -27,7 +27,10 @@ export interface Values {
     values?: number[]
 }
 
-
+const environmentTranslationMap: Record<DeviceEnvironment, DeviceType> = {
+    'universe-prod': 'TripowerX',
+    'evcharger': 'EvCharger',
+};
 
 // const WidgetTypeMap: { [key: string]: string } = {
 //     State: 'states',
@@ -70,6 +73,11 @@ export interface DeviceInfoWidgetResponse {
     productGroupTagId: number
     productTagId: number
     serial: string
+}
+
+type DeviceEnvironment ='universe-prod'|'evcharger';
+export interface EnvironmentResponse {
+    environment: DeviceEnvironment,
 }
 
 export interface DeviceInfoFeature {
@@ -123,6 +131,7 @@ export interface ParametersValue {
 export default class SmaEnnexosDevice extends SmaDevice{
 
     private componentId = 'IGULD:SELF';
+    private environment: null|EnvironmentResponse = null;
 
     protected async login(): Promise<SmaLoginResponse> {
         return this._client.post<SmaLoginResponse>('/api/v1/token', {
@@ -135,6 +144,19 @@ export default class SmaEnnexosDevice extends SmaDevice{
             },
         } )
             .then(({data}) => data)
+    }
+
+    public async getEnvironment (): Promise<EnvironmentResponse> {
+        if (this.environment) {
+            return this.environment;
+        }
+        return this._client.get<EnvironmentResponse>(`/webui/assets/conf/environment.json`)
+            .then(({data}) => {
+                this.environment = data;
+                return data;
+            })
+            ;
+
     }
 
     public async getLiveMeasurementValues (): Promise<LiveRequestResponse> {
@@ -189,10 +211,12 @@ export default class SmaEnnexosDevice extends SmaDevice{
     }
 
     public async getDeviceDefinitions(): Promise<Devices> {
-        return Promise.resolve(getDevices('TripowerX'));
+        const environment = (await this.getEnvironment()).environment;
+        return getDevices(environmentTranslationMap[environment]);
     }
     public async getTranslations(): Promise<MetaItems> {
-        return Promise.resolve(getMeta('TripowerX', 'de').META);
+        const environment = (await this.getEnvironment()).environment;
+        return getMeta(environmentTranslationMap[environment], 'de').META;
     }
 }
 
