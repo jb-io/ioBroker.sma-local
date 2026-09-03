@@ -72,7 +72,11 @@ export default abstract class SmaDevice {
                         try {
                             await this.authenticate();
                             const originalRequest = error.config;
-                            return this._client(originalRequest);
+                            originalRequest.headers.Authorization = this._client.defaults.headers.common['Authorization'];
+                            const response = this._client(originalRequest);
+                            await response;
+                            isRetryAttempt = false;
+                            return response;
                         } catch (tokenError) {
                             return Promise.reject(tokenError);
                         }
