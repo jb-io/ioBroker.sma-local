@@ -13,6 +13,16 @@ import SmaEnnexosDevice, {LiveRequestResponse, ParametersResponse} from "./SmaEn
 import SmaLegacyDevice, {GetValuesResponse, N0Data, N0DataNode, N1Data, N1DataNode, N9Data, N9DataNode, ObjectMetadata} from "./SmaLegacyDevice";
 import {Device} from "./data";
 
+// Request errors (e.g. AxiosError) can contain circular references (e.g. via the http agent),
+// which JSON.stringify throws on. Fall back to the error message in that case.
+function serializeError(error: unknown): string {
+    try {
+        return JSON.stringify(error);
+    } catch {
+        return error instanceof Error ? error.message : String(error);
+    }
+}
+
 
 class SmaLocal extends utils.Adapter {
 
@@ -260,7 +270,7 @@ class SmaLocal extends utils.Adapter {
         const requestLiveData = async () => {
             this.log.debug('Request Live Data');
             const response = await device.getAllOnlValues().catch((e) => {
-                this.log.error(JSON.stringify(e));
+                this.log.error(serializeError(e));
                 this.setState('info.connection', false, true);
                 return null;
             });
@@ -289,7 +299,7 @@ class SmaLocal extends utils.Adapter {
                 }
 
                 const response = await device.getValues(chunk).catch((e) => {
-                    this.log.error(JSON.stringify(e));
+                    this.log.error(serializeError(e));
                     this.setState('info.connection', false, true);
                     return null;
                 });
@@ -469,7 +479,7 @@ class SmaLocal extends utils.Adapter {
         const requestLiveData = async () => {
             this.log.debug('Request Live Data');
             const liveMeasurementValues = await device.getLiveMeasurementValues().catch((e) => {
-                this.log.error(JSON.stringify(e));
+                this.log.error(serializeError(e));
                 this.setState('info.connection', false, true);
                 return null;
             });
@@ -483,7 +493,7 @@ class SmaLocal extends utils.Adapter {
         const requestParameters = async () => {
             this.log.debug(`Request Parameters Data`);
             const parametersResponse = await device.getParameters().catch((e) => {
-                this.log.error(JSON.stringify(e));
+                this.log.error(serializeError(e));
                 this.setState('info.connection', false, true);
                 return null;
             });
