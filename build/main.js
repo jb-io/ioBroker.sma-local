@@ -27,6 +27,7 @@ var import_SmaLegacyDevice = __toESM(require("./SmaLegacyDevice"));
 class SmaLocal extends utils.Adapter {
   adapterIntervals;
   adapterTimeouts;
+  device;
   constructor(options = {}) {
     super({
       ...options,
@@ -59,6 +60,7 @@ class SmaLocal extends utils.Adapter {
         password: this.config.password || ""
       });
     }
+    this.device = device;
     device.onAuthenticate((response) => {
       if (this.config.storeSessionToken) {
         this.extendObject("info.session", {
@@ -428,13 +430,16 @@ class SmaLocal extends utils.Adapter {
   /**
    * Is called when adapter shuts down - callback has to be called under any circumstances!
    */
-  onUnload(callback) {
+  async onUnload(callback) {
     try {
       for (const timeout of this.adapterTimeouts) {
         this.clearTimeout(timeout);
       }
       for (const interval of this.adapterIntervals) {
         this.clearInterval(interval);
+      }
+      if (this.device instanceof import_SmaLegacyDevice.default) {
+        await this.device.logout();
       }
       callback();
     } catch {

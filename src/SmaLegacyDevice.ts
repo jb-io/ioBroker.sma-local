@@ -99,6 +99,14 @@ export default class SmaLegacyDevice extends SmaDevice {
             })
     }
 
+    public async logout(): Promise<void> {
+        if (!this._sessionToken) {
+            return;
+        }
+        await this._client.post('/dyn/logout.json', {});
+        this.setSessionToken(null);
+    }
+
     public async getAllOnlValues (): Promise<GetAllOnlValuesResponse> {
         return this._client.post(`/dyn/getAllOnlValues.json`, {"destDev":[]})
             .then(response => response.data)

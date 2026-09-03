@@ -54,6 +54,13 @@ class SmaLegacyDevice extends import_SmaDevice.default {
       };
     });
   }
+  async logout() {
+    if (!this._sessionToken) {
+      return;
+    }
+    await this._client.post("/dyn/logout.json", {});
+    this.setSessionToken(null);
+  }
   async getAllOnlValues() {
     return this._client.post(`/dyn/getAllOnlValues.json`, { "destDev": [] }).then((response) => response.data);
   }

@@ -47,6 +47,7 @@ https://www.sma.de/produkte
 * [ENH] Detect Ennexos device environment (TripowerX/EV-Charger) instead of hardcoding TripowerX
 * [FIX] Resolve the cache-busted filename of the legacy device's tag translation file (e.g. `data/l10n/de-DE.<hash>.json`) instead of the plain, non-existent `data/l10n/de-DE.json`, which some firmware versions reject with HTTP 400; also don't crash the adapter if translations still can't be fetched, falling back to raw tag ids instead
 * [FIX] Fix duplicate `sid` query parameter on legacy devices when retrying a request after re-authentication, which caused the retried request to fail with HTTP 400
+* [ENH] Log out of legacy devices (`POST /dyn/logout.json`) when the adapter unloads, freeing the session slot on the device
 
 ### 0.1.0 (2024-10-09)
 * [TASK] initial release

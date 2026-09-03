@@ -19,6 +19,7 @@ class SmaLocal extends utils.Adapter {
 
    private readonly adapterIntervals: (ioBroker.Interval | undefined)[] ;
    private readonly adapterTimeouts: (ioBroker.Timeout | undefined)[];
+   private device: SmaDevice | undefined;
 
 
     public constructor(options: Partial<utils.AdapterOptions> = {}) {
@@ -62,6 +63,7 @@ class SmaLocal extends utils.Adapter {
                 password: this.config.password || '',
             })
         }
+        this.device = device;
 
         device.onAuthenticate((response: LoginResponse) => {
             if (this.config.storeSessionToken) {
@@ -512,7 +514,7 @@ class SmaLocal extends utils.Adapter {
     /**
      * Is called when adapter shuts down - callback has to be called under any circumstances!
      */
-    private onUnload(callback: () => void): void {
+    private async onUnload(callback: () => void): Promise<void> {
         try {
             // Here you must clear all timeouts or intervals that may still be active
             for (const timeout of this.adapterTimeouts) {
@@ -520,6 +522,10 @@ class SmaLocal extends utils.Adapter {
             }
             for (const interval of this.adapterIntervals) {
                 this.clearInterval(interval);
+            }
+
+            if (this.device instanceof SmaLegacyDevice) {
+                await this.device.logout();
             }
 
             callback();
