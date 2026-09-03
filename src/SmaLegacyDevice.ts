@@ -80,7 +80,7 @@ export default class SmaLegacyDevice extends SmaDevice {
         this._client.interceptors.request.use((config) => {
             if (this._sessionToken) {
                 const url = new URL(config.url as string, config.baseURL);
-                url.searchParams.append('sid', this._sessionToken);
+                url.searchParams.set('sid', this._sessionToken);
                 config.url = url.toString().replace(config.baseURL as string, '');
             }
             return config;
@@ -119,9 +119,38 @@ export default class SmaLegacyDevice extends SmaDevice {
 
     public async getTagTranslations (): Promise<TagTranslationResponse> {
 
-        return this._client.get(`/data/l10n/de-DE.json`)
+        const path = await this.resolveCacheBustedPath('data/l10n/de-DE.json');
+        return this._client.get(`/${path}`)
             .then((response) => response.data)
         ;
+    }
+
+    private _cacheBustedPaths: {[path: string]: Promise<string>} = {};
+
+    /**
+     * Some firmware versions no longer serve static /data files under their plain name and instead require the
+     * cache-busted filename (e.g. `data/l10n/de-DE.<hash>.json`) that is baked into the web UI's script bundle at
+     * build time (as the angular "cacheKeys" constant). Resolve it by scraping the currently served bundle instead
+     * of hardcoding a hash that changes with every firmware build.
+     */
+    private async resolveCacheBustedPath(path: string): Promise<string> {
+        if (!(path in this._cacheBustedPaths)) {
+            this._cacheBustedPaths[path] = this._client.get<string>('/')
+                .then(({data: html}) => {
+                    const scriptMatch = /scripts\/scripts\.[0-9a-f]+\.js/.exec(html);
+                    if (!scriptMatch) {
+                        return path;
+                    }
+                    return this._client.get<string>(`/${scriptMatch[0]}`).then(({data: script}) => {
+                        const escapedPath = path.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const cacheKeyMatch = new RegExp(`"${escapedPath}":"([^"]+)"`).exec(script);
+                        return cacheKeyMatch ? cacheKeyMatch[1] : path;
+                    });
+                })
+                .catch(() => path);
+        }
+
+        return this._cacheBustedPaths[path];
     }
 
 }

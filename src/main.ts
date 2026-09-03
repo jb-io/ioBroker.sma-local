@@ -116,7 +116,12 @@ class SmaLocal extends utils.Adapter {
         type ObjectKey = keyof typeof objectMetadataCollection;
         const objectMetadataCollection = await device.getObjectMetaData();
 
-        const translations = await device.getTagTranslations();
+        let translations: Awaited<ReturnType<typeof device.getTagTranslations>> = {};
+        try {
+            translations = await device.getTagTranslations();
+        } catch (error) {
+            this.log.warn(`Failed to fetch tag translations, falling back to raw tag ids: ${error}`);
+        }
         const getTranslation = (tag: number|string): string => {
             if (tag in translations) {
                 return translations[tag];

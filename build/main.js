@@ -104,7 +104,12 @@ class SmaLocal extends utils.Adapter {
   }
   async setupLegacyDevice(device) {
     const objectMetadataCollection = await device.getObjectMetaData();
-    const translations = await device.getTagTranslations();
+    let translations = {};
+    try {
+      translations = await device.getTagTranslations();
+    } catch (error) {
+      this.log.warn(`Failed to fetch tag translations, falling back to raw tag ids: ${error}`);
+    }
     const getTranslation = (tag) => {
       if (tag in translations) {
         return translations[tag];
