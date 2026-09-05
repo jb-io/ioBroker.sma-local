@@ -426,6 +426,37 @@ class SmaLocal extends utils.Adapter {
             return objectStateConfig[key];
         }
 
+        /**
+         * getObjectStateConfig() derives common.type from the device definition's valueType,
+         * but the device sends every value as a string (and numeric ids for serial numbers and
+         * hardware revisions). Coerce to the declared type so js-controller does not reject the
+         * value. Channels without a definition and ENUMs stay untouched, they are typed 'mixed'.
+         */
+        const applyValueType = (key: string, value: ioBroker.StateValue): ioBroker.StateValue => {
+            if (value === null || value === undefined) {
+                return null;
+            }
+
+            switch (devices[key]?.valueType) {
+                case 'SCALAR': {
+                    // The device reports channels it currently has no value for as the string "NaN".
+                    if (value === '' || value === 'NaN') {
+                        return null;
+                    }
+                    const numericValue = parseFloat(`${value}`);
+                    if (isNaN(numericValue)) {
+                        this.log.debug(`Ignoring non-numeric value ${JSON.stringify(value)} for SCALAR channel ${key}.`);
+                        return null;
+                    }
+                    return numericValue;
+                }
+                case 'TEXT':
+                    return `${value}`;
+                default:
+                    return value;
+            }
+        }
+
         const handleLiveDataResponse = async (data : LiveRequestResponse): Promise<void> => {
             this.log.debug(`Received Live Data Response: ${JSON.stringify(data.map((channel) => channel.channelId))}`);
             await this.setState('info.connection', true, true);
@@ -443,11 +474,12 @@ class SmaLocal extends utils.Adapter {
                     const id = await getDataIdPathMapping(normalizedChannelId);
                     const objPart = getObjectStateConfig(normalizedChannelId);
                     if ('value' in channelData && channelData.value !== undefined) {
-                        await this.extendObject(id, objPart).then(() => this.setState(id, channelData.value || null, true));
+                        const value = applyValueType(normalizedChannelId, channelData.value || null);
+                        await this.extendObject(id, objPart).then(() => this.setState(id, value, true));
                     } else if ('values' in channelData && channelData.values !== undefined) {
                         for (let index = 0; index < channelData.values.length; index++) {
                             const itemId = `${id}.${index}`;
-                            const value = channelData.values[index] || null;
+                            const value = applyValueType(normalizedChannelId, channelData.values[index] || null);
                             await this.extendObject(itemId, objPart).then(() => this.setState(itemId, value, true));
                         }
                     }
@@ -471,7 +503,13 @@ class SmaLocal extends utils.Adapter {
                     const id = await getDataIdPathMapping(normalizedChannelId);
                     const objPart = getObjectStateConfig(normalizedChannelId, channel);
 
+                    const valueType = devices[normalizedChannelId]?.valueType;
                     const transform = (value: string): ioBroker.StateValue => {
+                        // The declared type wins over the shape of the value, otherwise numeric
+                        // serial numbers and hardware revisions end up as numbers in TEXT states.
+                        if (valueType === 'SCALAR' || valueType === 'TEXT') {
+                            return applyValueType(normalizedChannelId, value);
+                        }
                         if (channel.min || channel.max || /^\d+(\.\d+)?$/.test(value)) {
                             return parseFloat(value);
                         }

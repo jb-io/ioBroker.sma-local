@@ -356,6 +356,29 @@ class SmaLocal extends utils.Adapter {
       }
       return objectStateConfig[key];
     };
+    const applyValueType = (key, value) => {
+      var _a;
+      if (value === null || value === void 0) {
+        return null;
+      }
+      switch ((_a = devices[key]) == null ? void 0 : _a.valueType) {
+        case "SCALAR": {
+          if (value === "" || value === "NaN") {
+            return null;
+          }
+          const numericValue = parseFloat(`${value}`);
+          if (isNaN(numericValue)) {
+            this.log.debug(`Ignoring non-numeric value ${JSON.stringify(value)} for SCALAR channel ${key}.`);
+            return null;
+          }
+          return numericValue;
+        }
+        case "TEXT":
+          return `${value}`;
+        default:
+          return value;
+      }
+    };
     const handleLiveDataResponse = async (data) => {
       this.log.debug(`Received Live Data Response: ${JSON.stringify(data.map((channel) => channel.channelId))}`);
       await this.setState("info.connection", true, true);
@@ -370,11 +393,12 @@ class SmaLocal extends utils.Adapter {
           const id = await getDataIdPathMapping(normalizedChannelId);
           const objPart = getObjectStateConfig(normalizedChannelId);
           if ("value" in channelData && channelData.value !== void 0) {
-            await this.extendObject(id, objPart).then(() => this.setState(id, channelData.value || null, true));
+            const value = applyValueType(normalizedChannelId, channelData.value || null);
+            await this.extendObject(id, objPart).then(() => this.setState(id, value, true));
           } else if ("values" in channelData && channelData.values !== void 0) {
             for (let index = 0; index < channelData.values.length; index++) {
               const itemId = `${id}.${index}`;
-              const value = channelData.values[index] || null;
+              const value = applyValueType(normalizedChannelId, channelData.values[index] || null);
               await this.extendObject(itemId, objPart).then(() => this.setState(itemId, value, true));
             }
           }
@@ -389,9 +413,14 @@ class SmaLocal extends utils.Adapter {
       for (const channel of data[0].values) {
         const normalizedChannelId = channel.channelId.replace(/\[]$/, "");
         promises.push((async () => {
+          var _a;
           const id = await getDataIdPathMapping(normalizedChannelId);
           const objPart = getObjectStateConfig(normalizedChannelId, channel);
+          const valueType = (_a = devices[normalizedChannelId]) == null ? void 0 : _a.valueType;
           const transform = (value) => {
+            if (valueType === "SCALAR" || valueType === "TEXT") {
+              return applyValueType(normalizedChannelId, value);
+            }
             if (channel.min || channel.max || /^\d+(\.\d+)?$/.test(value)) {
               return parseFloat(value);
             }

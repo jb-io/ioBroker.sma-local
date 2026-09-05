@@ -44,6 +44,8 @@ https://www.sma.de/produkte
 -->
 ### **WORK IN PROGRESS**
 * [ENH] Refresh the Sunny Tripower X channel definitions and DE/EN translations from a current ennexOS firmware (3329 -> 3977 channels), so newer parameters and measurements (off-grid/backup operation, grid connection point, battery and charging channels) are no longer reported as `Device definition ... not found` and get a proper name, unit and type
+* [FIX] Write values with the type the channel declares: SCALAR channels are converted to numbers on the live data path too (previously written as raw strings), and TEXT channels such as serial numbers and hardware revisions stay strings instead of being parsed into numbers. This removes the `State value to set for ... has to be type ...` messages
+* [FIX] Treat the `"NaN"` a device reports for a channel it currently has no value for as an empty state instead of writing it to a numeric state
 
 ### 0.3.0 (2026-09-05)
 * [TASK] Require Node.js >= 22 and run the CI tests on Node 22.x and 24.x
