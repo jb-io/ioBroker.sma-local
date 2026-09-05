@@ -48,6 +48,8 @@ class SmaLegacyDevice extends import_SmaDevice.default {
     return this._client.post("/dyn/login.json", {
       right: "istl",
       pass: this._config.password
+    }, {
+      smaSkipReauthentication: true
     }).then(({ data }) => {
       return {
         access_token: data.result.sid

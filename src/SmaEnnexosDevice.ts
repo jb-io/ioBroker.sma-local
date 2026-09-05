@@ -142,6 +142,7 @@ export default class SmaEnnexosDevice extends SmaDevice{
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
             },
+            smaSkipReauthentication: true,
         } )
             .then(({data}) => data)
     }

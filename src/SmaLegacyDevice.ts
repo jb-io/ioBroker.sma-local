@@ -91,6 +91,8 @@ export default class SmaLegacyDevice extends SmaDevice {
         return this._client.post<SmaLoginResponse>('/dyn/login.json', {
             right: 'istl',
             pass: this._config.password,
+        }, {
+            smaSkipReauthentication: true,
         } )
             .then(({data}): LoginResponse => {
                 return {

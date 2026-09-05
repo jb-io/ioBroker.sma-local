@@ -48,7 +48,8 @@ class SmaEnnexosDevice extends import_SmaDevice.default {
     }, {
       headers: {
         "content-type": "application/x-www-form-urlencoded"
-      }
+      },
+      smaSkipReauthentication: true
     }).then(({ data }) => data);
   }
   async getEnvironment() {

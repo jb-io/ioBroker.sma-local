@@ -38,6 +38,7 @@ class SmaDevice {
   _client;
   _sessionToken = null;
   _onAuthenticate = null;
+  _pendingAuthentication = null;
   constructor(config) {
     this._config = config;
     this._client = import_axios.default.create({
@@ -52,7 +53,6 @@ class SmaDevice {
       }),
       withCredentials: true
     });
-    let isRetryAttempt = false;
     this._client.interceptors.response.use(
       (response) => {
         const data = response.data;
@@ -78,19 +78,16 @@ class SmaDevice {
       (response) => response,
       async (error) => {
         if (error.status === 401 || error.response && error.response.status === 401) {
-          if (!isRetryAttempt) {
-            isRetryAttempt = true;
+          const originalRequest = error.config;
+          if (originalRequest && !originalRequest.smaSkipReauthentication && !originalRequest.smaIsRetryAttempt) {
+            originalRequest.smaIsRetryAttempt = true;
             try {
-              await this.authenticate();
-              const originalRequest = error.config;
-              originalRequest.headers.Authorization = this._client.defaults.headers.common["Authorization"];
-              const response = this._client(originalRequest);
-              await response;
-              isRetryAttempt = false;
-              return response;
+              await this.authenticateOnce();
             } catch (tokenError) {
               return Promise.reject(tokenError);
             }
+            originalRequest.headers.Authorization = this._client.defaults.headers.common["Authorization"];
+            return this._client(originalRequest);
           }
         }
         return Promise.reject(error);
@@ -107,6 +104,18 @@ class SmaDevice {
       this.setSessionToken(response.access_token);
     }
     return response;
+  }
+  /**
+   * Authenticate, but let concurrent callers share one in-flight login instead of each
+   * requesting a token of its own (and invalidating the others' token in the process).
+   */
+  authenticateOnce() {
+    if (!this._pendingAuthentication) {
+      this._pendingAuthentication = this.authenticate().finally(() => {
+        this._pendingAuthentication = null;
+      });
+    }
+    return this._pendingAuthentication;
   }
   onAuthenticate(handler) {
     this._onAuthenticate = handler;

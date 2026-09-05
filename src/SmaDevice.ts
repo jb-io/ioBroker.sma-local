@@ -1,6 +1,15 @@
 import axios from 'axios';
 import https from 'https';
 
+declare module 'axios' {
+    interface AxiosRequestConfig {
+        /** Set on the login request itself so a 401 there does not recurse into authenticate(). */
+        smaSkipReauthentication?: boolean,
+        /** Set once a request has been replayed after a re-authentication. */
+        smaIsRetryAttempt?: boolean,
+    }
+}
+
 export interface LoginResponse {
     access_token: string,
     expires_in?: number,
@@ -22,6 +31,7 @@ export default abstract class SmaDevice {
     protected _sessionToken: string | null = null;
 
     private _onAuthenticate: OnAuthenticationHandler | null = null;
+    private _pendingAuthentication: Promise<LoginResponse | null> | null = null;
 
     constructor(config: SmaDeviceConfig) {
         this._config = config;
@@ -38,8 +48,6 @@ export default abstract class SmaDevice {
             }),
             withCredentials: true,
         });
-
-        let isRetryAttempt = false;
 
         this._client.interceptors.response.use(
             (response) => {
@@ -67,19 +75,21 @@ export default abstract class SmaDevice {
             async (error) => {
                 // 401 (Unauthorized)
                 if (error.status === 401 || (error.response && error.response.status === 401)) {
-                    if (!isRetryAttempt) {
-                        isRetryAttempt = true;
+                    const originalRequest = error.config as axios.InternalAxiosRequestConfig | undefined;
+                    // The retry state lives on the request, not on the client: the polls run
+                    // concurrently, so a shared flag would let the first 401 swallow the retry of
+                    // every other request that ran into the same expired token.
+                    if (originalRequest && !originalRequest.smaSkipReauthentication && !originalRequest.smaIsRetryAttempt) {
+                        originalRequest.smaIsRetryAttempt = true;
                         try {
-                            await this.authenticate();
-                            const originalRequest = error.config;
-                            originalRequest.headers.Authorization = this._client.defaults.headers.common['Authorization'];
-                            const response = this._client(originalRequest);
-                            await response;
-                            isRetryAttempt = false;
-                            return response;
+                            await this.authenticateOnce();
                         } catch (tokenError) {
                             return Promise.reject(tokenError);
                         }
+                        // Re-read the header: authenticate() has just replaced it, the one the
+                        // original request carries is the expired token.
+                        originalRequest.headers.Authorization = this._client.defaults.headers.common['Authorization'];
+                        return this._client(originalRequest);
                     }
                 }
                 return Promise.reject(error);
@@ -102,6 +112,20 @@ export default abstract class SmaDevice {
         }
 
         return response;
+    }
+
+    /**
+     * Authenticate, but let concurrent callers share one in-flight login instead of each
+     * requesting a token of its own (and invalidating the others' token in the process).
+     */
+    private authenticateOnce(): Promise<LoginResponse | null> {
+        if (!this._pendingAuthentication) {
+            this._pendingAuthentication = this.authenticate()
+                .finally(() => {
+                    this._pendingAuthentication = null;
+                });
+        }
+        return this._pendingAuthentication;
     }
 
     public onAuthenticate(handler: (response: LoginResponse) => void | Promise<void>): void {
