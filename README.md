@@ -42,6 +42,9 @@ https://www.sma.de/produkte
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* [ENH] Refresh the Sunny Tripower X channel definitions and DE/EN translations from a current ennexOS firmware (3329 -> 3977 channels), so newer parameters and measurements (off-grid/backup operation, grid connection point, battery and charging channels) are no longer reported as `Device definition ... not found` and get a proper name, unit and type
+
 ### 0.3.0 (2026-09-05)
 * [TASK] Require Node.js >= 22 and run the CI tests on Node 22.x and 24.x
 * [TASK] Migrate ESLint to the flat `eslint.config.js` format so `npm run lint` works again with ESLint 9
