@@ -48,6 +48,7 @@ https://www.sma.de/produkte
 * [FIX] Resolve the cache-busted filename of the legacy device's tag translation file (e.g. `data/l10n/de-DE.<hash>.json`) instead of the plain, non-existent `data/l10n/de-DE.json`, which some firmware versions reject with HTTP 400; also don't crash the adapter if translations still can't be fetched, falling back to raw tag ids instead
 * [FIX] Fix duplicate `sid` query parameter on legacy devices when retrying a request after re-authentication, which caused the retried request to fail with HTTP 400
 * [ENH] Log out of legacy devices (`POST /dyn/logout.json`) when the adapter unloads, freeing the session slot on the device
+* [FIX] Await the creation of the `info.session` object before writing the session token, avoiding the "State ... has no existing object" warning
 * [FIX] Don't crash the adapter when logging a request error whose object contains circular references (`JSON.stringify` threw `Converting circular structure to JSON`), falling back to the error message instead
 
 ### 0.1.0 (2024-10-09)

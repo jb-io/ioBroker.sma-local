@@ -68,24 +68,26 @@ class SmaLocal extends utils.Adapter {
       });
     }
     this.device = device;
-    device.onAuthenticate((response) => {
+    device.onAuthenticate(async (response) => {
       if (this.config.storeSessionToken) {
-        this.extendObject("info.session", {
+        await this.extendObject("info.session", {
           type: "state",
           common: {
             type: "string",
             name: "Session token",
             role: "text",
+            read: true,
             write: false
-          }
+          },
+          native: {}
         });
-        this.setState("info.session", {
+        await this.setState("info.session", {
           val: response.access_token,
           ack: true,
           expire: response.expires_in
         });
       }
-      this.setState("info.connection", true, true);
+      await this.setState("info.connection", true, true);
       this.log.info(`Authenticated with token: ${response.access_token}`);
     });
     let authenticated = false;

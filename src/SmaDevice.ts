@@ -94,7 +94,7 @@ export default abstract class SmaDevice {
         const response = await this.login().catch(() => null);
         if (response) {
             if (this._onAuthenticate) {
-                this._onAuthenticate(response);
+                await this._onAuthenticate(response);
             }
             this.setSessionToken(response.access_token);
         }
