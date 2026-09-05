@@ -42,6 +42,10 @@ https://www.sma.de/produkte
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+* [TASK] Require Node.js >= 22 and run the CI tests on Node 22.x and 24.x
+* [TASK] Migrate ESLint to the flat `eslint.config.js` format so `npm run lint` works again with ESLint 9
+
 ### 0.2.0 (2026-09-05)
 * [FIX] Re-apply Authorization header when retrying requests after re-authentication
 * [ENH] Detect Ennexos device environment (TripowerX/EV-Charger) instead of hardcoding TripowerX

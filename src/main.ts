@@ -8,10 +8,10 @@ import * as utils from '@iobroker/adapter-core';
 
 // Load your modules here:
 // import _ from 'lodash';
-import SmaDevice, {LoginResponse} from "./SmaDevice";
-import SmaEnnexosDevice, {LiveRequestResponse, ParametersResponse} from "./SmaEnnexosDevice";
-import SmaLegacyDevice, {GetValuesResponse, N0Data, N0DataNode, N1Data, N1DataNode, N9Data, N9DataNode, ObjectMetadata} from "./SmaLegacyDevice";
-import {Device} from "./data";
+import SmaDevice, {LoginResponse} from './SmaDevice';
+import SmaEnnexosDevice, {LiveRequestResponse, ParametersResponse} from './SmaEnnexosDevice';
+import SmaLegacyDevice, {GetValuesResponse, N0Data, N0DataNode, N1Data, N1DataNode, N9Data, N9DataNode, ObjectMetadata} from './SmaLegacyDevice';
+import {Device} from './data';
 
 // Request errors (e.g. AxiosError) can contain circular references (e.g. via the http agent),
 // which JSON.stringify throws on. Fall back to the error message in that case.
@@ -205,12 +205,12 @@ class SmaLocal extends utils.Adapter {
 
             const transformDataNodes = (dataNode: N0DataNode|N1DataNode|N9DataNode, objectMetadata: ObjectMetadata): Array<ioBroker.StateValue>|null => {
                 let data: N0Data[]|N1Data[]|N9Data[] = [];
-                if ("0" in dataNode) {
-                    data = (dataNode as N0DataNode)["0"];
-                } else if ("1" in dataNode) {
-                    data = (dataNode as N1DataNode)["1"];
-                } else if ("9" in dataNode) {
-                    data = (dataNode as N9DataNode)["9"];
+                if ('0' in dataNode) {
+                    data = (dataNode as N0DataNode)['0'];
+                } else if ('1' in dataNode) {
+                    data = (dataNode as N1DataNode)['1'];
+                } else if ('9' in dataNode) {
+                    data = (dataNode as N9DataNode)['9'];
                 }
 
                 if (data.length <= 0) {
@@ -269,7 +269,7 @@ class SmaLocal extends utils.Adapter {
             await Promise.all(promises);
         }
 
-        const requestLiveData = async () => {
+        const requestLiveData = async (): Promise<void> => {
             this.log.debug('Request Live Data');
             const response = await device.getAllOnlValues().catch((e) => {
                 this.log.error(serializeError(e));
@@ -284,7 +284,7 @@ class SmaLocal extends utils.Adapter {
         this.adapterIntervals.push(this.setInterval(requestLiveData, this.config.intervalLiveData * 1000));
         this.adapterTimeouts.push(this.setTimeout(requestLiveData, 1000));
 
-        const requestFull = async () => {
+        const requestFull = async (): Promise<void> => {
             const keys = Object.keys(objectMetadataCollection);
             const chunkSize = 64;
             const chunkCount = Math.ceil(keys.length / chunkSize);
@@ -292,7 +292,7 @@ class SmaLocal extends utils.Adapter {
 
             const timeout = Math.round((this.config.intervalFull * 1000) / (chunkCount + 1));
 
-            const handleChunk = async () => {
+            const handleChunk = async (): Promise<void> => {
                 this.log.debug(`Request Full Data Chunk ${offset} - ${offset + chunkSize} / ${keys.length}`);
                 const chunk = keys.slice(offset, offset + chunkSize);
                 offset += chunkSize;
@@ -425,9 +425,9 @@ class SmaLocal extends utils.Adapter {
                 promises.push((async (): Promise<any> => {
                     const id = await getDataIdPathMapping(normalizedChannelId);
                     const objPart = getObjectStateConfig(normalizedChannelId);
-                    if ("value" in channelData && channelData.value !== undefined) {
+                    if ('value' in channelData && channelData.value !== undefined) {
                         await this.extendObject(id, objPart).then(() => this.setState(id, channelData.value || null, true));
-                    } else if ("values" in channelData && channelData.values !== undefined) {
+                    } else if ('values' in channelData && channelData.values !== undefined) {
                         for (let index = 0; index < channelData.values.length; index++) {
                             const itemId = `${id}.${index}`;
                             const value = channelData.values[index] || null;
@@ -463,9 +463,9 @@ class SmaLocal extends utils.Adapter {
                         }
                         return value;
                     }
-                    if ("value" in channel && channel.value !== undefined) {
+                    if ('value' in channel && channel.value !== undefined) {
                         await this.extendObject(id, objPart).then(() => this.setState(id, transform(channel.value), true));
-                    } else if ("values" in channel && channel.values !== undefined) {
+                    } else if ('values' in channel && channel.values !== undefined) {
                         for (let index = 0; index < channel.values.length; index++) {
                             const itemId = `${id}.${index}`;
                             await this.extendObject(itemId, objPart).then(() => this.setState(itemId, transform(channel.values[index]), true));
@@ -478,7 +478,7 @@ class SmaLocal extends utils.Adapter {
             await Promise.all(promises);
         }
 
-        const requestLiveData = async () => {
+        const requestLiveData = async (): Promise<void> => {
             this.log.debug('Request Live Data');
             const liveMeasurementValues = await device.getLiveMeasurementValues().catch((e) => {
                 this.log.error(serializeError(e));
@@ -492,7 +492,7 @@ class SmaLocal extends utils.Adapter {
         this.adapterIntervals.push(this.setInterval(requestLiveData, this.config.intervalLiveData * 1000));
         this.adapterTimeouts.push(this.setTimeout(requestLiveData, 1000));
 
-        const requestParameters = async () => {
+        const requestParameters = async (): Promise<void> => {
             this.log.debug(`Request Parameters Data`);
             const parametersResponse = await device.getParameters().catch((e) => {
                 this.log.error(serializeError(e));
@@ -514,8 +514,7 @@ class SmaLocal extends utils.Adapter {
      */
     private async onStateChange(id: string, state: ioBroker.State | null | undefined): Promise<void> {
         if (state) {
-
-
+            // Nothing to do yet: the adapter does not act on state changes
         } else {
             // The state was deleted
             this.log.debug(`state ${id} deleted`);

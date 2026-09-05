@@ -1,4 +1,4 @@
-import SmaDevice, {LoginResponse, SmaDeviceConfig} from "./SmaDevice";
+import SmaDevice, {LoginResponse, SmaDeviceConfig} from './SmaDevice';
 
 
 type SmaLoginResponse = {
@@ -9,9 +9,9 @@ type ObjectValueData = {
     [key: string]: N0DataNode | N1DataNode | N9DataNode;
 };
 
-export type N0DataNode = { "0": N0Data[] };
-export type N1DataNode = { "1": N1Data[] };
-export type N9DataNode = { "9": N9Data[] };
+export type N0DataNode = { '0': N0Data[] };
+export type N1DataNode = { '1': N1Data[] };
+export type N9DataNode = { '9': N9Data[] };
 export type N0Data = {
     val: string
 }
@@ -108,12 +108,12 @@ export default class SmaLegacyDevice extends SmaDevice {
     }
 
     public async getAllOnlValues (): Promise<GetAllOnlValuesResponse> {
-        return this._client.post(`/dyn/getAllOnlValues.json`, {"destDev":[]})
+        return this._client.post(`/dyn/getAllOnlValues.json`, {'destDev':[]})
             .then(response => response.data)
         ;
     }
     public async getValues (keys: string[]): Promise<GetAllOnlValuesResponse> {
-        return this._client.post(`/dyn/getValues.json`, {"destDev":[], "keys": keys})
+        return this._client.post(`/dyn/getValues.json`, {'destDev':[], 'keys': keys})
             .then(response => response.data)
         ;
     }

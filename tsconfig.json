@@ -8,6 +8,10 @@
         // the compilation is configured in tsconfig.build.json
         "noEmit": true,
 
+        // @tsconfig/node20 restricts this to ["node"], which would hide the
+        // mocha globals (describe/it) used by the *.test.ts files
+        "types": ["node", "mocha"],
+
         // check JS files, but do not compile them => tsconfig.build.json
         "allowJs": true,
         "checkJs": true,

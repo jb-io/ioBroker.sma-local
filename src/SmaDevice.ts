@@ -29,8 +29,8 @@ export default abstract class SmaDevice {
         this._client = axios.create({
             baseURL: 'https://' + config.host,
             headers: {
-                "accept": "application/json",
-                "content-type": "application/json",
+                'accept': 'application/json',
+                'content-type': 'application/json',
             },
             httpsAgent: new https.Agent({
                 rejectUnauthorized: false,
@@ -44,7 +44,7 @@ export default abstract class SmaDevice {
         this._client.interceptors.response.use(
             (response) => {
                 const data = response.data;
-                if ((typeof data === 'object') && "err" in data && data.err === 401) {
+                if ((typeof data === 'object') && 'err' in data && data.err === 401) {
                     response.status = 401;
                     return Promise.reject({
                         status: 401,

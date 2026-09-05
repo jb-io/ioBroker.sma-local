@@ -1,5 +1,5 @@
-import SmaDevice from "./SmaDevice";
-import {getDevices, getMeta, Devices, MetaItems, DeviceType} from "./data";
+import SmaDevice from './SmaDevice';
+import {getDevices, getMeta, Devices, MetaItems, DeviceType} from './data';
 
 interface SmaLoginResponse {
     access_token: string,
@@ -140,7 +140,7 @@ export default class SmaEnnexosDevice extends SmaDevice{
             password: this._config.password,
         },{
             headers: {
-                "content-type": "application/x-www-form-urlencoded",
+                'content-type': 'application/x-www-form-urlencoded',
             },
         } )
             .then(({data}) => data)
