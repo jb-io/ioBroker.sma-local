@@ -42,7 +42,7 @@ https://www.sma.de/produkte
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.3.0 (2026-09-05)
 * [TASK] Require Node.js >= 22 and run the CI tests on Node 22.x and 24.x
 * [TASK] Migrate ESLint to the flat `eslint.config.js` format so `npm run lint` works again with ESLint 9
 * [FIX] Don't crash on startup when the configured host is not a valid host name (e.g. the unchanged `SMA[serial number].local` default); log a configuration error instead
