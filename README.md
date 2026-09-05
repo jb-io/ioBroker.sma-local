@@ -42,7 +42,7 @@ https://www.sma.de/produkte
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.2.0 (2026-09-05)
 * [FIX] Re-apply Authorization header when retrying requests after re-authentication
 * [ENH] Detect Ennexos device environment (TripowerX/EV-Charger) instead of hardcoding TripowerX
 * [FIX] Resolve the cache-busted filename of the legacy device's tag translation file (e.g. `data/l10n/de-DE.<hash>.json`) instead of the plain, non-existent `data/l10n/de-DE.json`, which some firmware versions reject with HTTP 400; also don't crash the adapter if translations still can't be fetched, falling back to raw tag ids instead
@@ -56,4 +56,4 @@ https://www.sma.de/produkte
 
 ## License
 
-[Licensed under GPLv3](LICENSE) Copyright (c) 2024 jb-io
+[Licensed under GPLv3](LICENSE) Copyright (c) 2024-2026 jb-io
