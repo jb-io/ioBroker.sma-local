@@ -43,6 +43,9 @@ https://www.sma.de/produkte
     ### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* [ENH] Rework the instance configuration: the settings are now split into a "Connection" tab (device type, host, login) and an "Advanced" tab (polling intervals, session token), and follow the order in which they are needed - pick the device type first, then enter host and credentials
+* [ENH] Show screenshots of both device generations next to the device type selection - login page and dashboard, click to enlarge - so it is obvious which type to pick: ennexOS asks for user name and password and shows a dashboard of tiles, legacy devices ask for a user group and a password and show the classic navigation bar
+* [ENH] Better labels and help texts for every setting, a placeholder and a validation hint for the host name (no `http://`, no path), and sensible limits for the two polling intervals; all texts are translated into the 11 adapter languages
 * [ENH] Refresh the Sunny Tripower X channel definitions and DE/EN translations from a current ennexOS firmware (3329 -> 3977 channels), so newer parameters and measurements (off-grid/backup operation, grid connection point, battery and charging channels) are no longer reported as `Device definition ... not found` and get a proper name, unit and type
 * [FIX] Write values with the type the channel declares: SCALAR channels are converted to numbers on the live data path too (previously written as raw strings), and TEXT channels such as serial numbers and hardware revisions stay strings instead of being parsed into numbers. This removes the `State value to set for ... has to be type ...` messages
 * [FIX] Treat the `"NaN"` a device reports for a channel it currently has no value for as an empty state instead of writing it to a numeric state

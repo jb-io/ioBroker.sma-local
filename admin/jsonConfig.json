@@ -2,73 +2,257 @@
     "i18n": true,
     "type": "tabs",
     "items": {
-        "general": {
+        "tabConnection": {
             "type": "panel",
-            "label": "general",
+            "label": "tab_connection",
+            "icon": "info",
             "items": {
-                "host": {
+                "headerDeviceType": {
+                    "type": "header",
+                    "text": "header_device_type",
+                    "size": 2,
+                    "xs": 12
+                },
+                "hintDeviceType": {
+                    "type": "staticText",
+                    "text": "hint_device_type",
                     "xs": 12,
-                    "sm": 6,
-                    "md": 4,
-                    "type": "text",
-                    "label": "host"
+                    "md": 8
                 },
                 "legacyDevice": {
-                    "xs": 12,
-                    "sm": 6,
-                    "md": 4,
                     "type": "select",
                     "label": "legacy_device",
+                    "help": "legacy_device_help",
+                    "xs": 12,
+                    "sm": 8,
+                    "md": 5,
+                    "lg": 4,
+                    "newLine": true,
                     "options": [
                         {
-                            "label": {
-                                "en": "Legacy"
-                            },
-                            "value": true
+                            "label": "device_type_ennexos",
+                            "value": false
                         },
                         {
-                            "label": {
-                                "en": "ennexOS"
-                            },
-                            "value": false
+                            "label": "device_type_legacy",
+                            "value": true
                         }
                     ]
                 },
-                "username": {
+                "imageEnnexos": {
+                    "type": "staticImage",
+                    "src": "device-ennexos.png",
+                    "showInDialog": true,
+                    "showInDialogSmallSize": 200,
                     "xs": 12,
                     "sm": 6,
-                    "md": 4,
+                    "md": 5,
+                    "lg": 4,
+                    "newLine": true
+                },
+                "imageLegacy": {
+                    "type": "staticImage",
+                    "src": "device-legacy.png",
+                    "showInDialog": true,
+                    "showInDialogSmallSize": 200,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4
+                },
+                "captionEnnexos": {
+                    "type": "staticText",
+                    "text": "caption_ennexos",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4,
+                    "newLine": true
+                },
+                "captionLegacy": {
+                    "type": "staticText",
+                    "text": "caption_legacy",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4
+                },
+                "imageEnnexosDashboard": {
+                    "type": "staticImage",
+                    "src": "dashboard-ennexos.png",
+                    "showInDialog": true,
+                    "showInDialogSmallSize": 200,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4,
+                    "newLine": true
+                },
+                "imageLegacyDashboard": {
+                    "type": "staticImage",
+                    "src": "dashboard-legacy.png",
+                    "showInDialog": true,
+                    "showInDialogSmallSize": 200,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4
+                },
+                "captionEnnexosDashboard": {
+                    "type": "staticText",
+                    "text": "caption_ennexos_dashboard",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4,
+                    "newLine": true
+                },
+                "captionLegacyDashboard": {
+                    "type": "staticText",
+                    "text": "caption_legacy_dashboard",
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 5,
+                    "lg": 4
+                },
+                "dividerConnection": {
+                    "type": "divider",
+                    "newLine": true
+                },
+                "headerConnection": {
+                    "type": "header",
+                    "text": "header_connection",
+                    "size": 2,
+                    "xs": 12
+                },
+                "hintConnection": {
+                    "type": "staticText",
+                    "text": "hint_connection",
+                    "xs": 12,
+                    "md": 8
+                },
+                "host": {
                     "type": "text",
-                    "label": "username",
+                    "label": "label_host",
+                    "help": "host_help",
+                    "placeholder": "192.168.1.50",
+                    "trim": true,
+                    "validator": "!data.host || (!/:\\/\\//.test(data.host) && !data.host.includes('/'))",
+                    "validatorErrorText": "host_error",
+                    "xs": 12,
+                    "sm": 8,
+                    "md": 5,
+                    "lg": 4,
+                    "newLine": true
+                },
+                "dividerLogin": {
+                    "type": "divider",
+                    "newLine": true
+                },
+                "headerLogin": {
+                    "type": "header",
+                    "text": "header_login",
+                    "size": 2,
+                    "xs": 12
+                },
+                "hintLoginEnnexos": {
+                    "type": "staticText",
+                    "text": "hint_login_ennexos",
                     "hidden": "data.legacyDevice === true",
-                    "hideOnlyControl": true,
+                    "xs": 12,
+                    "md": 8
+                },
+                "hintLoginLegacy": {
+                    "type": "staticText",
+                    "text": "hint_login_legacy",
+                    "hidden": "data.legacyDevice !== true",
+                    "xs": 12,
+                    "md": 8
+                },
+                "username": {
+                    "type": "text",
+                    "label": "label_username",
+                    "help": "username_help",
+                    "trim": true,
+                    "hidden": "data.legacyDevice === true",
+                    "xs": 12,
+                    "sm": 8,
+                    "md": 5,
+                    "lg": 4,
                     "newLine": true
                 },
                 "password": {
+                    "type": "password",
+                    "label": "label_password",
+                    "help": "password_help",
+                    "visible": true,
+                    "xs": 12,
+                    "sm": 8,
+                    "md": 5,
+                    "lg": 4,
+                    "newLine": true
+                }
+            }
+        },
+        "tabAdvanced": {
+            "type": "panel",
+            "label": "tab_advanced",
+            "icon": "refresh",
+            "items": {
+                "headerPolling": {
+                    "type": "header",
+                    "text": "header_polling",
+                    "size": 2,
+                    "xs": 12
+                },
+                "hintPolling": {
+                    "type": "staticText",
+                    "text": "hint_polling",
+                    "xs": 12,
+                    "md": 8
+                },
+                "intervalLiveData": {
+                    "type": "number",
+                    "label": "interval_live_data",
+                    "help": "interval_live_data_help",
+                    "min": 5,
+                    "max": 3600,
+                    "step": 5,
                     "xs": 12,
                     "sm": 6,
                     "md": 4,
-                    "type": "password",
-                    "label": "password"
+                    "lg": 3,
+                    "newLine": true
+                },
+                "intervalFull": {
+                    "type": "number",
+                    "label": "interval_full",
+                    "help": "interval_full_help",
+                    "min": 30,
+                    "max": 86400,
+                    "step": 30,
+                    "xs": 12,
+                    "sm": 6,
+                    "md": 4,
+                    "lg": 3
+                },
+                "dividerSession": {
+                    "type": "divider",
+                    "newLine": true
+                },
+                "headerSession": {
+                    "type": "header",
+                    "text": "header_session",
+                    "size": 2,
+                    "xs": 12
                 },
                 "storeSessionToken": {
                     "type": "checkbox",
-                    "label": "store_session_token"
-                },
-                "intervalFull": {
+                    "label": "store_session_token",
+                    "help": "store_session_token_help",
                     "xs": 12,
-                    "sm": 4,
-                    "md": 2,
-                    "type": "number",
-                    "label": "interval_full",
+                    "md": 8,
                     "newLine": true
-                },
-                "intervalLiveData": {
-                    "xs": 12,
-                    "sm": 4,
-                    "md": 2,
-                    "type": "number",
-                    "label": "interval_live_data"
                 }
             }
         }
