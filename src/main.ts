@@ -57,6 +57,16 @@ class SmaLocal extends utils.Adapter {
         await this.setState('info.connection', false, true);
 
         if (!this.config.host) {
+            this.log.error('No host configured. Please set the host of your SMA device in the instance configuration.');
+            return;
+        }
+        // The default host in io-package.json is a placeholder ("SMA[serial number].local") and
+        // other typos produce hosts that axios cannot turn into a URL, which would otherwise
+        // crash the adapter with an unhandled "Invalid URL" rejection.
+        try {
+            new URL(`https://${this.config.host}`);
+        } catch {
+            this.log.error(`"${this.config.host}" is not a valid host. Please set the host name or IP address of your SMA device in the instance configuration.`);
             return;
         }
 
@@ -106,10 +116,6 @@ class SmaLocal extends utils.Adapter {
                 authenticated = true;
             }
         }
-        if (!authenticated) {
-            await device.authenticate();
-        }
-
         if (this.config.intervalLiveData <= 0) {
             this.log.info(`Will not receive live data because it is disabled in your configuration.`);
         }
@@ -117,10 +123,21 @@ class SmaLocal extends utils.Adapter {
             this.log.info(`Will not receive full data because it is disabled in your configuration.`);
         }
 
-        if (this.config.legacyDevice) {
-            await this.setupLegacyDevice(device as SmaLegacyDevice);
-        } else {
-            await this.setupEnnexosDevice(device as SmaEnnexosDevice);
+        // Everything below talks to the device. Keep the adapter alive on failure instead of
+        // letting the rejection escape, so the instance can be reconfigured without a crash loop.
+        try {
+            if (!authenticated) {
+                await device.authenticate();
+            }
+
+            if (this.config.legacyDevice) {
+                await this.setupLegacyDevice(device as SmaLegacyDevice);
+            } else {
+                await this.setupEnnexosDevice(device as SmaEnnexosDevice);
+            }
+        } catch (error) {
+            this.log.error(`Could not set up the device at ${this.config.host}: ${serializeError(error)}`);
+            await this.setState('info.connection', false, true);
         }
 
     }

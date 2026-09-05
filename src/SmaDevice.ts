@@ -91,7 +91,9 @@ export default abstract class SmaDevice {
 
     public async authenticate(): Promise<LoginResponse | null> {
         this.setSessionToken(null);
-        const response = await this.login().catch(() => null);
+        // Do not swallow the reason here: the caller logs it and stops the setup instead of
+        // continuing with an unauthenticated client whose every request then fails.
+        const response = await this.login();
         if (response) {
             if (this._onAuthenticate) {
                 await this._onAuthenticate(response);

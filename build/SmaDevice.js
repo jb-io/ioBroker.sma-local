@@ -99,7 +99,7 @@ class SmaDevice {
   }
   async authenticate() {
     this.setSessionToken(null);
-    const response = await this.login().catch(() => null);
+    const response = await this.login();
     if (response) {
       if (this._onAuthenticate) {
         await this._onAuthenticate(response);

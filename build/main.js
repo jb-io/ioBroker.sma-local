@@ -52,6 +52,13 @@ class SmaLocal extends utils.Adapter {
   async onReady() {
     await this.setState("info.connection", false, true);
     if (!this.config.host) {
+      this.log.error("No host configured. Please set the host of your SMA device in the instance configuration.");
+      return;
+    }
+    try {
+      new URL(`https://${this.config.host}`);
+    } catch {
+      this.log.error(`"${this.config.host}" is not a valid host. Please set the host name or IP address of your SMA device in the instance configuration.`);
       return;
     }
     let device;
@@ -98,19 +105,24 @@ class SmaLocal extends utils.Adapter {
         authenticated = true;
       }
     }
-    if (!authenticated) {
-      await device.authenticate();
-    }
     if (this.config.intervalLiveData <= 0) {
       this.log.info(`Will not receive live data because it is disabled in your configuration.`);
     }
     if (this.config.intervalFull <= 0) {
       this.log.info(`Will not receive full data because it is disabled in your configuration.`);
     }
-    if (this.config.legacyDevice) {
-      await this.setupLegacyDevice(device);
-    } else {
-      await this.setupEnnexosDevice(device);
+    try {
+      if (!authenticated) {
+        await device.authenticate();
+      }
+      if (this.config.legacyDevice) {
+        await this.setupLegacyDevice(device);
+      } else {
+        await this.setupEnnexosDevice(device);
+      }
+    } catch (error) {
+      this.log.error(`Could not set up the device at ${this.config.host}: ${serializeError(error)}`);
+      await this.setState("info.connection", false, true);
     }
   }
   async setupLegacyDevice(device) {
