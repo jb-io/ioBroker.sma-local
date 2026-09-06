@@ -50,6 +50,8 @@ https://www.sma.de/produkte
 * [FIX] Write values with the type the channel declares: SCALAR channels are converted to numbers on the live data path too (previously written as raw strings), and TEXT channels such as serial numbers and hardware revisions stay strings instead of being parsed into numbers. This removes the `State value to set for ... has to be type ...` messages
 * [FIX] Treat the `"NaN"` a device reports for a channel it currently has no value for as an empty state instead of writing it to a numeric state
 * [FIX] Re-authenticate and retry per request instead of once per client: when the token expired, only the first of the concurrently running polls was retried, the others failed with a logged `401` until the next poll. Concurrent requests now share a single re-authentication and are all replayed
+* [TASK] Fix the findings of the ioBroker adapter checker: require js-controller >= 5.0.19, shrink the adapter logo to 512x512, update `@iobroker/adapter-core` to 3.4.x, add device related keywords (plus `ioBroker` in `package.json` only, as `common.keywords` must not repeat it), encrypt the configured password (`encryptedNative`) and drop the deprecated `common.main` from `io-package.json`
+* [TASK] Remove `src/script.ts`, a fully commented-out prototype scratchpad from the initial commit that was never imported and still carried a device password in plain text
 
 ### 0.3.0 (2026-09-05)
 * [TASK] Require Node.js >= 22 and run the CI tests on Node 22.x and 24.x
