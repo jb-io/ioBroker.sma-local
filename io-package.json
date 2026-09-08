@@ -111,6 +111,11 @@
     "adminUI": {
       "config": "json"
     },
+    "plugins": {
+      "sentry": {
+        "dsn": "https://4b119027f00703deb131963467134021@o4512050980388864.ingest.de.sentry.io/4512050996445264"
+      }
+    },
     "dependencies": [
       {
         "js-controller": ">=5.0.19"

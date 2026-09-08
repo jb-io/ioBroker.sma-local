@@ -35,7 +35,15 @@ https://www.sma.de/produkte
 
 
 
+## Sentry error reporting
 
+**This adapter uses Sentry libraries to automatically report exceptions and code errors to the developers.** For more details and for information how to disable the error reporting see [Sentry-Plugin Documentation](https://github.com/ioBroker/plugin-sentry#plugin-sentry)! Sentry reporting is used starting with js-controller 3.0.
+
+### What is Sentry and what is reported to the servers of that company?
+
+Sentry.io is a service for developers to get an overview about errors from their applications. And exactly this is implemented in this adapter.
+
+When the adapter crashes or another Code error happens, this error message that also appears in the ioBroker log is submitted to our Sentry server. When you allowed iobroker GmbH to collect diagnostic data then also your installation ID (this is just a unique ID **without** any additional infos about you, email, name or such) is included. This allows Sentry to group errors and show how many unique users are affected by such an error. All of this helps me to provide error free adapters that basically never crash.
 
 ## Changelog
 <!--
@@ -43,6 +51,7 @@ https://www.sma.de/produkte
     ### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* [ENH] Report crashes and code errors to Sentry (`@iobroker/plugin-sentry`), as recommended by the ioBroker adapter defaults; see the "Sentry error reporting" section in the README for what is transmitted and how to switch it off
 * [ENH] Rework the instance configuration: the settings are now split into a "Connection" tab (device type, host, login) and an "Advanced" tab (polling intervals, session token), and follow the order in which they are needed - pick the device type first, then enter host and credentials
 * [ENH] Show screenshots of both device generations next to the device type selection - login page and dashboard, click to enlarge - so it is obvious which type to pick: ennexOS asks for user name and password and shows a dashboard of tiles, legacy devices ask for a user group and a password and show the classic navigation bar
 * [ENH] Better labels and help texts for every setting, a placeholder and a validation hint for the host name (no `http://`, no path), and sensible limits for the two polling intervals; all texts are translated into the 11 adapter languages
