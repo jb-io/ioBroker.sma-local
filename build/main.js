@@ -24,13 +24,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 var utils = __toESM(require("@iobroker/adapter-core"));
 var import_SmaEnnexosDevice = __toESM(require("./SmaEnnexosDevice"));
 var import_SmaLegacyDevice = __toESM(require("./SmaLegacyDevice"));
-function serializeError(error) {
-  try {
-    return JSON.stringify(error);
-  } catch {
-    return error instanceof Error ? error.message : String(error);
-  }
-}
+var import_serializeError = __toESM(require("./serializeError"));
 class SmaLocal extends utils.Adapter {
   adapterIntervals;
   adapterTimeouts;
@@ -121,7 +115,7 @@ class SmaLocal extends utils.Adapter {
         await this.setupEnnexosDevice(device);
       }
     } catch (error) {
-      this.log.error(`Could not set up the device at ${this.config.host}: ${serializeError(error)}`);
+      this.log.error(`Could not set up the device at ${this.config.host}: ${(0, import_serializeError.default)(error)}`);
       await this.setState("info.connection", false, true);
     }
   }
@@ -247,7 +241,7 @@ class SmaLocal extends utils.Adapter {
     const requestLiveData = async () => {
       this.log.debug("Request Live Data");
       const response = await device.getAllOnlValues().catch((e) => {
-        this.log.error(serializeError(e));
+        this.log.error((0, import_serializeError.default)(e));
         this.setState("info.connection", false, true);
         return null;
       });
@@ -272,7 +266,7 @@ class SmaLocal extends utils.Adapter {
           this.setTimeout(handleChunk, timeout);
         }
         const response = await device.getValues(chunk).catch((e) => {
-          this.log.error(serializeError(e));
+          this.log.error((0, import_serializeError.default)(e));
           this.setState("info.connection", false, true);
           return null;
         });
@@ -444,7 +438,7 @@ class SmaLocal extends utils.Adapter {
     const requestLiveData = async () => {
       this.log.debug("Request Live Data");
       const liveMeasurementValues = await device.getLiveMeasurementValues().catch((e) => {
-        this.log.error(serializeError(e));
+        this.log.error((0, import_serializeError.default)(e));
         this.setState("info.connection", false, true);
         return null;
       });
@@ -457,7 +451,7 @@ class SmaLocal extends utils.Adapter {
     const requestParameters = async () => {
       this.log.debug(`Request Parameters Data`);
       const parametersResponse = await device.getParameters().catch((e) => {
-        this.log.error(serializeError(e));
+        this.log.error((0, import_serializeError.default)(e));
         this.setState("info.connection", false, true);
         return null;
       });

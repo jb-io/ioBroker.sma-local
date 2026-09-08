@@ -51,6 +51,7 @@ When the adapter crashes or another Code error happens, this error message that 
     ### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* [FIX] Log request errors readably: a legacy device reporting an expired session as `{err: 401}` in the body of an HTTP 200 was rejected as a plain object, which ended up in the log as `[object Object]`. Errors are now summarized as message, code, status, request and response body - and the full request configuration, which carried the device password in plain text, is no longer dumped
 * [FIX] Re-authenticate and replay the request when a legacy device reports the expired session in the response body: that rejection carried no request configuration, so the retry interceptor silently skipped it and every poll kept failing until the next restart
 * [ENH] Report crashes and code errors to Sentry (`@iobroker/plugin-sentry`), as recommended by the ioBroker adapter defaults; see the "Sentry error reporting" section in the README for what is transmitted and how to switch it off
 * [ENH] Rework the instance configuration: the settings are now split into a "Connection" tab (device type, host, login) and an "Advanced" tab (polling intervals, session token), and follow the order in which they are needed - pick the device type first, then enter host and credentials
