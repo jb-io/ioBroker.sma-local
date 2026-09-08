@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import axios from 'axios';
-import SmaDevice, { LoginResponse } from './SmaDevice';
+import SmaDevice, { LoginResponse, SmaUnauthorizedError } from './SmaDevice';
 
 /**
  * A device whose login and whose requests are served by a stubbed axios adapter, so the
@@ -14,6 +14,8 @@ class TestDevice extends SmaDevice {
     public issuedToken = 'token-2';
     /** The token the stubbed endpoints accept. */
     public validToken = 'token-2';
+    /** Answer an expired token the way a legacy device does: HTTP 200 with `{err: 401}`. */
+    public reportUnauthorizedInBody = false;
 
     constructor() {
         super({host: 'sma.invalid', username: 'user', password: 'secret'});
@@ -25,6 +27,10 @@ class TestDevice extends SmaDevice {
             }
             this.requestCount++;
             if (config.headers.Authorization !== `Bearer ${this.validToken}`) {
+                // A legacy device reports an expired session in the body of an HTTP 200.
+                if (this.reportUnauthorizedInBody) {
+                    return this.respond(config, 200, {err: 401});
+                }
                 throw Object.assign(new Error('Request failed with status code 401'), {
                     config: config,
                     response: this.respond(config, 401, {}),
@@ -65,6 +71,36 @@ describe('SmaDevice => re-authentication on 401', () => {
         // Both requests failed, both were replayed - and they shared a single login.
         expect(device.requestCount).to.equal(4);
         expect(device.loginCount).to.equal(1);
+    });
+
+    it('retries a legacy device answering HTTP 200 with `{err: 401}` in the body', async () => {
+        const device = new TestDevice();
+        device.reportUnauthorizedInBody = true;
+        device.setSessionToken('token-1');
+
+        const {status, data} = await device.get('/dyn/getValues.json');
+
+        expect(status).to.equal(200);
+        expect((data as {ok: string}).ok).to.equal('/dyn/getValues.json');
+        expect(device.requestCount).to.equal(2);
+        expect(device.loginCount).to.equal(1);
+    });
+
+    it('rejects a body-reported 401 with an Error once the retry fails too', async () => {
+        const device = new TestDevice();
+        device.reportUnauthorizedInBody = true;
+        device.setSessionToken('token-1');
+        device.issuedToken = 'token-3';
+
+        let error: unknown = null;
+        await device.get('/dyn/getValues.json').catch((e) => {
+            error = e;
+        });
+
+        // A plain rejection object would leave the log with "[object Object]".
+        expect(error).to.be.instanceOf(SmaUnauthorizedError);
+        expect((error as SmaUnauthorizedError).status).to.equal(401);
+        expect((error as Error).message).to.include('/dyn/getValues.json');
     });
 
     it('retries a request only once', async () => {

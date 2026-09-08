@@ -51,6 +51,7 @@ When the adapter crashes or another Code error happens, this error message that 
     ### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+* [FIX] Re-authenticate and replay the request when a legacy device reports the expired session in the response body: that rejection carried no request configuration, so the retry interceptor silently skipped it and every poll kept failing until the next restart
 * [ENH] Report crashes and code errors to Sentry (`@iobroker/plugin-sentry`), as recommended by the ioBroker adapter defaults; see the "Sentry error reporting" section in the README for what is transmitted and how to switch it off
 * [ENH] Rework the instance configuration: the settings are now split into a "Connection" tab (device type, host, login) and an "Advanced" tab (polling intervals, session token), and follow the order in which they are needed - pick the device type first, then enter host and credentials
 * [ENH] Show screenshots of both device generations next to the device type selection - login page and dashboard, click to enlarge - so it is obvious which type to pick: ennexOS asks for user name and password and shows a dashboard of tiles, legacy devices ask for a user group and a password and show the classic navigation bar

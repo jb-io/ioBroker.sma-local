@@ -10,6 +10,25 @@ declare module 'axios' {
     }
 }
 
+/**
+ * A legacy device answers an expired session with HTTP 200 and `{err: 401}` in the body.
+ * Rejecting with a plain object there made the value useless in a log line ("[object Object]")
+ * and, without a `config`, the re-authentication interceptor below could not replay the request.
+ */
+export class SmaUnauthorizedError extends Error {
+
+    public readonly status = 401;
+    public readonly response: axios.AxiosResponse;
+    public readonly config?: axios.InternalAxiosRequestConfig;
+
+    constructor(response: axios.AxiosResponse) {
+        super(`Request to ${response.config?.url || 'the device'} was answered with err 401 (unauthorized)`);
+        this.name = 'SmaUnauthorizedError';
+        this.response = response;
+        this.config = response.config;
+    }
+}
+
 export interface LoginResponse {
     access_token: string,
     expires_in?: number,
@@ -54,10 +73,7 @@ export default abstract class SmaDevice {
                 const data = response.data;
                 if ((typeof data === 'object') && 'err' in data && data.err === 401) {
                     response.status = 401;
-                    return Promise.reject({
-                        status: 401,
-                        response: response,
-                    });
+                    return Promise.reject(new SmaUnauthorizedError(response));
                 }
                 return response;
             },

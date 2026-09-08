@@ -28,11 +28,24 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var SmaDevice_exports = {};
 __export(SmaDevice_exports, {
+  SmaUnauthorizedError: () => SmaUnauthorizedError,
   default: () => SmaDevice
 });
 module.exports = __toCommonJS(SmaDevice_exports);
 var import_axios = __toESM(require("axios"));
 var import_https = __toESM(require("https"));
+class SmaUnauthorizedError extends Error {
+  status = 401;
+  response;
+  config;
+  constructor(response) {
+    var _a;
+    super(`Request to ${((_a = response.config) == null ? void 0 : _a.url) || "the device"} was answered with err 401 (unauthorized)`);
+    this.name = "SmaUnauthorizedError";
+    this.response = response;
+    this.config = response.config;
+  }
+}
 class SmaDevice {
   _config;
   _client;
@@ -58,10 +71,7 @@ class SmaDevice {
         const data = response.data;
         if (typeof data === "object" && "err" in data && data.err === 401) {
           response.status = 401;
-          return Promise.reject({
-            status: 401,
-            response
-          });
+          return Promise.reject(new SmaUnauthorizedError(response));
         }
         return response;
       },
@@ -125,4 +135,8 @@ class SmaDevice {
     this._client.defaults.headers.common["Authorization"] = token ? `Bearer ${token}` : null;
   }
 }
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  SmaUnauthorizedError
+});
 //# sourceMappingURL=SmaDevice.js.map
